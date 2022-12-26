@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dns.resolution.mapper.DnsPlatformUserInfoMapper">
+
+    <resultMap type="DnsPlatformUserInfo" id="DnsPlatformUserInfoResult">
+    	<id     property="id"      column="id"      />
+        <result property="userId"    column="user_id"    />
+        <result property="userName"     column="user_name"     />
+        <result property="password"   column="password"   />
+        <result property="email"    column="email"    />
+        <result property="userLevel"      column="user_level"      />
+        <result property="registerTime"    column="register_time"    />
+    </resultMap>
+
+    <sql id="selectDnsPlatformUserInfoVo">
+        select id, user_id, user_name, password, email, user_level, register_time from dns_platform_user_info
+    </sql>
+    
+    <select id="selectDnsPlatformUserInfoCountByEmail" parameterType="String" resultType="Integer">
+        select count(*) from dns_platform_user_info where email = #{email} limit 1
+    </select>
+
+    <insert id="insertDnsPlatformUserInfo" parameterType="DnsPlatformUserInfo">
+        insert ignore into dns_platform_user_info(id, user_id, user_name, password, email, user_level, register_time) VALUES(#{id}, #{userId}, #{userName}, #{password}, #{email}, #{userLevel}, #{registerTime});
+    </insert>
+
+    <update id="updateDnsPlatformUserInfoPassword" parameterType="DnsPlatformUserInfo">
+        update dns_platform_user_info set password = #{password} where email = #{email}
+    </update>
+
+    <select id="selectDnsPlatformUserInfoByEmail" parameterType="String" resultMap="DnsPlatformUserInfoResult">
+        <include refid="selectDnsPlatformUserInfoVo"/> where email = #{email} limit 1
+    </select>
+    
+</mapper>
