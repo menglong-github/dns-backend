@@ -119,7 +119,7 @@ public class DnsPlatformUserServiceImpl implements DnsPlatformUserService {
                         dnsPlatformUserInfo.setUserId(snowflakeUtils.nextId());
                         dnsPlatformUserInfo.setUserLevel(RegisterConstants.REGISTER_DEFAULT_USER_LEVEL);
                         dnsPlatformUserInfo.setUserName(IdUtils.fastSimpleUUID());
-                        dnsPlatformUserInfo.setRegisterTime(System.nanoTime());
+                        dnsPlatformUserInfo.setRegisterTime(System.currentTimeMillis());
                         dnsPlatformUserInfo.setEmail(userBody.getEmail());
                         dnsPlatformUserInfo.setPassword(SecurityUtils.encryptPassword(userBody.getPassword()));
                         int result = dnsPlatformUserInfoMapper.insertDnsPlatformUserInfo(dnsPlatformUserInfo);

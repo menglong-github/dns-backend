@@ -22,7 +22,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select count(*) from dns_platform_user_info where email = #{email} limit 1
     </select>
 
-    <insert id="insertDnsPlatformUserInfo" parameterType="DnsPlatformUserInfo">
+    <insert id="insertDnsPlatformUserInfo" parameterType="DnsPlatformUserInfo" useGeneratedKeys="true" keyProperty="id">
         insert ignore into dns_platform_user_info(id, user_id, user_name, password, email, user_level, register_time) VALUES(#{id}, #{userId}, #{userName}, #{password}, #{email}, #{userLevel}, #{registerTime});
     </insert>
 

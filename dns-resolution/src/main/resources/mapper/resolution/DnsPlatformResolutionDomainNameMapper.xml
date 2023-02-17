@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.dns.resolution.mapper.DnsPlatformUserInfoMapper">
+<mapper namespace="com.dns.resolution.mapper.DnsPlatformResolutionDomainNameMapper">
 
-    <resultMap type="DnsPlatformUserInfo" id="DnsPlatformUserInfoResult">
+    <resultMap type="DnsPlatformResolutionDomainName" id="DnsPlatformResolutionDomainNameResult">
         <id     property="id"      column="id"      />
         <result property="userId"    column="user_id"    />
         <result property="domainId"     column="domain_id"     />
@@ -14,28 +14,55 @@
         <result property="dnssecKskPublicKey"    column="dnssec_ksk_public_key"    />
         <result property="dnssecZskPrivateKey"    column="dnssec_zsk_private_key"    />
         <result property="dnssecZskPublicKey"    column="dnssec_zsk_public_key"    />
+        <result property="dnssecDsKeyTag"    column="dnssec_ds_key_tag"    />
+        <result property="dnssecDsDigestValue"    column="dnssec_ds_digest_value"    />
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
-    <sql id="selectDnsPlatformUserInfoVo">
-        select id, user_id, domain_id, domain_name, dnssec_enable, dnssec_ksk_private_key, dnssec_ksk_public_key, dnssec_ksk_public_key, dnssec_zsk_private_key, dnssec_zsk_public_key, create_time, update_time from dns_platform_resolution_domain_name
+    <resultMap type="DnsPlatformResolutionDomainNameView" id="DnsPlatformResolutionDomainNameViewResult">
+        <result property="domainId"     column="domain_id"     />
+        <result property="domainName"   column="domain_name"   />
+        <result property="dnssecEnable"    column="dnssec_enable"    />
+        <result property="dnssecDsKeyTag"    column="dnssec_ds_key_tag"    />
+        <result property="dnssecDsDigestValue"    column="dnssec_ds_digest_value"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectDnsPlatformResolutionDomainNameVo">
+        select id, user_id, domain_id, domain_name, dnssec_enable, dnssec_ksk_private_key, dnssec_ksk_public_key, dnssec_zsk_private_key, dnssec_zsk_public_key, dnssec_ds_key_tag, dnssec_ds_digest_value, create_time, update_time from dns_platform_resolution_domain_name
     </sql>
 
-    <select id="selectDnsPlatformUserInfoCountByEmail" parameterType="String" resultType="Integer">
-        select count(*) from dns_platform_user_info where email = #{email} limit 1
-    </select>
+    <sql id="selectDnsPlatformResolutionDomainNameViewVo">
+        select domain_id, domain_name, dnssec_enable, dnssec_ds_key_tag, dnssec_ds_digest_value, create_time, update_time from dns_platform_resolution_domain_name
+    </sql>
 
-    <insert id="insertDnsPlatformUserInfo" parameterType="DnsPlatformUserInfo">
-        insert ignore into dns_platform_user_info(id, user_id, user_name, password, email, user_level, register_time) VALUES(#{id}, #{userId}, #{userName}, #{password}, #{email}, #{userLevel}, #{registerTime});
+    <insert id="insertDnsPlatformResolutionDomainName" parameterType="DnsPlatformResolutionDomainName"  useGeneratedKeys="true" keyProperty="id">
+        insert into dns_platform_resolution_domain_name(id, user_id, domain_id, domain_name, dnssec_enable, dnssec_ksk_private_key, dnssec_ksk_public_key, dnssec_zsk_private_key, dnssec_zsk_public_key, create_time, update_time) VALUES(#{id}, #{userId}, #{domainId}, #{domainName}, #{dnssecEnable}, #{dnssecKskPrivateKey}, #{dnssecKskPublicKey}, #{dnssecZskPrivateKey}, #{dnssecZskPublicKey}, #{createTime}, #{updateTime}) on duplicate key update user_id = #{userId}, update_time = #{updateTime};
     </insert>
 
-    <update id="updateDnsPlatformUserInfoPassword" parameterType="DnsPlatformUserInfo">
-        update dns_platform_user_info set password = #{password} where email = #{email}
+    <select id="selectDnsPlatformResolutionDomainNameViewListByUserId" parameterType="DomainNameBody" resultMap="DnsPlatformResolutionDomainNameViewResult">
+        <include refid="selectDnsPlatformResolutionDomainNameViewVo"/> where user_id = #{userId}
+        <if test="domainName != null and domainName != ''">
+            AND domain_name like concat('%', #{domainName}, '%')
+        </if>
+    </select>
+
+    <select id="selectDnsPlatformResolutionDomainNameByDomainId" parameterType="Long" resultMap="DnsPlatformResolutionDomainNameResult">
+        <include refid="selectDnsPlatformResolutionDomainNameVo"/> where domain_id = #{domainId} limit 1
+    </select>
+
+    <select id="selectDnsPlatformResolutionDomainNameAllList" resultMap="DnsPlatformResolutionDomainNameResult">
+        <include refid="selectDnsPlatformResolutionDomainNameVo"/>
+    </select>
+
+    <update id="updateDnsPlatformResolutionDomainNameDnssec" parameterType="DnsPlatformResolutionDomainName">
+        update dns_platform_resolution_domain_name set dnssec_enable = #{dnssecEnable}, dnssec_ksk_private_key = #{dnssecKskPrivateKey}, dnssec_ksk_public_key = #{dnssecKskPublicKey}, dnssec_zsk_private_key = #{dnssecZskPrivateKey}, dnssec_zsk_public_key = #{dnssecZskPublicKey}, dnssec_ds_key_tag = #{dnssecDsKeyTag}, dnssec_ds_digest_value = #{dnssecDsDigestValue}, update_time = #{updateTime} where id = #{id}
     </update>
 
-    <select id="selectDnsPlatformUserInfoByEmail" parameterType="String" resultMap="DnsPlatformUserInfoResult">
-        <include refid="selectDnsPlatformUserInfoVo"/> where email = #{email} limit 1
-    </select>
+    <delete id="deleteDnsPlatformResolutionDomainName" parameterType="DnsPlatformResolutionDomainName">
+        delete from dns_platform_resolution_domain_name where id = #{id}
+    </delete>
 
 </mapper>

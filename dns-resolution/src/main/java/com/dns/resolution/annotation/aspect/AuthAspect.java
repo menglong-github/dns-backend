@@ -32,26 +32,35 @@ public class AuthAspect {
     @Pointcut("@annotation(auth)")
     public void pointCut(Auth auth) {}
 
+    private Object authException() {
+        int code = HttpStatus.UNAUTHORIZED;
+        String msg = StringUtils.format("Request access：{}，authentication failed", ServletUtils.getRequest().getRequestURI());
+        ServletUtils.renderString(ServletUtils.getResponse(), JSON.toJSONString(AjaxResult.error(code, msg)));
+        return null;
+    }
+
     @Around(value = "pointCut(auth)", argNames = "proceedingJoinPoint,auth")
-    public Object authAroundAspect(ProceedingJoinPoint proceedingJoinPoint, Auth auth) {
+    public Object authAroundAspect(ProceedingJoinPoint proceedingJoinPoint, Auth auth) throws Throwable {
         String jwtToken = ServletUtils.getRequest().getHeader(LoginConstants.JWT_HEADER);
+        Claims claims;
+        long tokenExpire;
         try {
-            Claims claims = Jwts.parser().setSigningKey(LoginConstants.JWT_SECRET).parseClaimsJws(jwtToken).getBody();
-            long tokenExpire = (long) claims.get(LoginConstants.JWT_CLAIMS_EXPIRE_KEY);
-            if (tokenExpire > System.currentTimeMillis()) {
-                DnsPlatformUserInfo dnsPlatformUserInfo = redisCache.getCacheObject(LoginConstants.LOGIN_USER_TOKEN_CACHE_KEY + claims.get(LoginConstants.JWT_CLAIMS_TOKEN_KEY));
-                dnsPlatformUserInfo.hashCode();
+            claims = Jwts.parser().setSigningKey(LoginConstants.JWT_SECRET).parseClaimsJws(jwtToken).getBody();
+            tokenExpire = (long) claims.get(LoginConstants.JWT_CLAIMS_EXPIRE_KEY);
+        } catch (Exception exception) {
+            return authException();
+        }
+        if (tokenExpire > System.currentTimeMillis()) {
+            DnsPlatformUserInfo dnsPlatformUserInfo = redisCache.getCacheObject(LoginConstants.LOGIN_USER_TOKEN_CACHE_KEY + claims.get(LoginConstants.JWT_CLAIMS_TOKEN_KEY));
+            if (dnsPlatformUserInfo == null) {
+                return authException();
+            } else {
                 ServletUtils.getRequest().setAttribute(LoginConstants.SERVLET_LOGIN_JWT_CLAIMS_KEY, claims);
                 ServletUtils.getRequest().setAttribute(LoginConstants.SERVLET_LOGIN_USER_KEY, dnsPlatformUserInfo);
                 return proceedingJoinPoint.proceed();
-            } else {
-                throw new Exception();
             }
-        } catch (Throwable exception) {
-            int code = HttpStatus.UNAUTHORIZED;
-            String msg = StringUtils.format("Request access：{}，authentication failed", ServletUtils.getRequest().getRequestURI());
-            ServletUtils.renderString(ServletUtils.getResponse(), JSON.toJSONString(AjaxResult.error(code, msg)));
-            return null;
+        } else {
+            return authException();
         }
     }
 

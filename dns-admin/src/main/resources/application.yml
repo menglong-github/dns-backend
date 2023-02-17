@@ -141,3 +141,13 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+
+#消息队列
+mq:
+  rabbit:
+    host: 110.42.172.182
+    port: 5672
+    user: admin
+    password: adimin
+    init: init
+    exchange: DNS

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dns.resolution.mapper.DnsPlatformResolutionDomainNameZoneMapper">
+
+    <resultMap type="DnsPlatformResolutionDomainNameZone" id="DnsPlatformResolutionDomainNameZoneResult">
+        <id     property="id"      column="id"      />
+        <result property="zoneId"     column="zone_id"     />
+        <result property="domainId"     column="domain_id"     />
+        <result property="geoCode"    column="geo_code"    />
+        <result property="zoneContent"    column="zone_content"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <resultMap type="DnsPlatformResolutionDomainNameZoneView" id="DnsPlatformResolutionDomainNameZoneViewResult">
+        <result property="zoneId"     column="zone_id"     />
+        <result property="domainId"     column="domain_id"     />
+        <result property="geoCode"    column="geo_code"    />
+        <result property="zoneContent"    column="zone_content"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectDnsPlatformResolutionDomainNameZoneVo">
+        select id, zone_id, domain_id, geo_code, zone_content, create_time, update_time from dns_platform_resolution_domain_name_zone
+    </sql>
+
+    <sql id="selectDnsPlatformResolutionDomainNameZoneViewVo">
+        select zone_id, domain_id, geo_code, zone_content, create_time, update_time from dns_platform_resolution_domain_name_zone
+    </sql>
+
+    <insert id="insertDnsPlatformResolutionDomainNameZone" parameterType="DnsPlatformResolutionDomainNameZone"  useGeneratedKeys="true" keyProperty="id">
+        insert into dns_platform_resolution_domain_name_zone(id, zone_id, domain_id, geo_code, zone_content, create_time, update_time) VALUES(#{id}, #{zoneId}, #{domainId}, #{geoCode}, #{zoneContent}, #{createTime}, #{updateTime}) on duplicate key update zone_content = #{zoneContent}, update_time = #{updateTime};
+    </insert>
+
+    <select id="selectDnsPlatformResolutionDomainNameZoneByDomainId" parameterType="Long" resultMap="DnsPlatformResolutionDomainNameZoneResult">
+        <include refid="selectDnsPlatformResolutionDomainNameZoneVo"/> where domain_id = #{domainId}
+    </select>
+
+    <select id="selectDnsPlatformResolutionDomainNameZoneViewByDomainId" parameterType="Long" resultMap="DnsPlatformResolutionDomainNameZoneViewResult">
+        <include refid="selectDnsPlatformResolutionDomainNameZoneViewVo"/> where domain_id = #{domainId}
+    </select>
+
+    <update id="updateDnsPlatformResolutionDomainNameZone" parameterType="DnsPlatformResolutionDomainNameZone">
+        update dns_platform_resolution_domain_name_zone set zone_content = #{zoneContent}, update_time = #{updateTime} where id = #{id}
+    </update>
+    
+    <delete id="deleteDnsPlatformResolutionDomainNameZoneByDomainId" parameterType="Long">
+        delete from dns_platform_resolution_domain_name_zone where domain_id = #{domainId}
+    </delete>
+
+    <select id="selectDnsPlatformResolutionDomainNameZoneByZoneId" parameterType="Long" resultMap="DnsPlatformResolutionDomainNameZoneResult">
+        <include refid="selectDnsPlatformResolutionDomainNameZoneVo"/> where zone_id = #{zoneId} limit 1
+    </select>
+
+    <delete id="deleteDnsPlatformResolutionDomainNameZoneById" parameterType="Long">
+        delete from dns_platform_resolution_domain_name_zone where id = #{id}
+    </delete>
+
+</mapper>

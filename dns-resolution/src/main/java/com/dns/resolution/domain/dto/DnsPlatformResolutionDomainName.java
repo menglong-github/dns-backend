@@ -1,5 +1,6 @@
 package com.dns.resolution.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
@@ -13,6 +14,8 @@ public class DnsPlatformResolutionDomainName {
     private String dnssecKskPublicKey;
     private String dnssecZskPrivateKey;
     private String dnssecZskPublicKey;
+    private Integer dnssecDsKeyTag;
+    private String dnssecDsDigestValue;
     private Long createTime;
     private Long updateTime;
 }
