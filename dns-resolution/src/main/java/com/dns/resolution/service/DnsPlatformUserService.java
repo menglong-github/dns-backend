@@ -15,4 +15,6 @@ public interface DnsPlatformUserService {
 
     public Map<String, Object> login(UserBody userBody);
 
+    public void logout();
+
 }

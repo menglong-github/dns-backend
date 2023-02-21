@@ -3,6 +3,7 @@ package com.dns.web.controller.system;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.dns.common.core.controller.BaseController;
 import com.dns.common.core.domain.AjaxResult;
@@ -16,6 +17,7 @@ import com.dns.system.service.ISysConfigService;
  * 
  * @author dns
  */
+@RequestMapping("/system")
 @RestController
 public class SysRegisterController extends BaseController
 {

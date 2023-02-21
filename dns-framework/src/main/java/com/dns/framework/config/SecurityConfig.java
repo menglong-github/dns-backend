@@ -111,7 +111,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 // 过滤请求
                 .authorizeRequests()
                 // 对于登录login 注册register 验证码captchaImage 允许匿名访问
-                .antMatchers("/login", "/register", "/captchaImage", "/web/**").permitAll()
+                .antMatchers("/system/login", "/system/register", "/system/captchaImage", "/web/**").permitAll()
                 // 静态资源，可匿名访问
                 .antMatchers(HttpMethod.GET, "/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/profile/**").permitAll()
                 .antMatchers("/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/*/api-docs", "/druid/**").permitAll()
@@ -120,7 +120,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .and()
                 .headers().frameOptions().disable();
         // 添加Logout filter
-        httpSecurity.logout().logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler);
+        httpSecurity.logout().logoutUrl("/system/logout").logoutSuccessHandler(logoutSuccessHandler);
         // 添加JWT filter
         httpSecurity.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
         // 添加CORS filter

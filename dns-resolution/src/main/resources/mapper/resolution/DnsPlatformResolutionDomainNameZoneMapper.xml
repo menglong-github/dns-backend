@@ -39,8 +39,8 @@
         <include refid="selectDnsPlatformResolutionDomainNameZoneVo"/> where domain_id = #{domainId}
     </select>
 
-    <select id="selectDnsPlatformResolutionDomainNameZoneViewByDomainId" parameterType="Long" resultMap="DnsPlatformResolutionDomainNameZoneViewResult">
-        <include refid="selectDnsPlatformResolutionDomainNameZoneViewVo"/> where domain_id = #{domainId}
+    <select id="selectDnsPlatformResolutionDomainNameZoneSimpleViewByDomainId" parameterType="Long" resultMap="DnsPlatformResolutionDomainNameZoneViewResult">
+        select id, zone_id, domain_id, geo_code, create_time, update_time from dns_platform_resolution_domain_name_zone where domain_id = #{domainId}
     </select>
 
     <update id="updateDnsPlatformResolutionDomainNameZone" parameterType="DnsPlatformResolutionDomainNameZone">

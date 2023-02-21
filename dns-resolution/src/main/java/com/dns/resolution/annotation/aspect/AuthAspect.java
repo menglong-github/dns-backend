@@ -65,7 +65,7 @@ public class AuthAspect {
     }
 
     @AfterReturning(value = "pointCut(auth)", argNames = "auth,result", returning = "result")
-    public void wechatAppletAuthAfterReturningAspect(Auth auth, AjaxResult result) {
+    public void authAfterReturningAspect(Auth auth, AjaxResult result) {
         Claims claims = (Claims) ServletUtils.getRequest().getAttribute(LoginConstants.SERVLET_LOGIN_JWT_CLAIMS_KEY);
         long tokenExpire = (long) claims.get(LoginConstants.JWT_CLAIMS_EXPIRE_KEY);
         if (TimeUnit.MILLISECONDS.toMinutes(tokenExpire - System.currentTimeMillis()) < LoginConstants.JWT_EXPIRE_REFRESH) {

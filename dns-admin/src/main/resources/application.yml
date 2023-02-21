@@ -18,7 +18,7 @@ dns:
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
-  port: 8080
+  port: 25683
   servlet:
     # 应用的访问路径
     context-path: /
@@ -145,9 +145,9 @@ xss:
 #消息队列
 mq:
   rabbit:
-    host: 110.42.172.182
+    host: 101.34.125.234
     port: 5672
     user: admin
-    password: adimin
+    password: 1314520..z..
     init: init
     exchange: DNS

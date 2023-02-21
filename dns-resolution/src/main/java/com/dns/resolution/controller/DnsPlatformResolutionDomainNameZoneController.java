@@ -39,4 +39,16 @@ public class DnsPlatformResolutionDomainNameZoneController {
         return AjaxResult.success(dnsPlatformResolutionDomainNameZoneService.delete(dnsPlatformResolutionDomainNameZone));
     }
 
+    @Auth
+    @GetMapping("/info")
+    public AjaxResult info(DnsPlatformResolutionDomainNameZone dnsPlatformResolutionDomainNameZone) {
+        return AjaxResult.success(dnsPlatformResolutionDomainNameZoneService.info(dnsPlatformResolutionDomainNameZone));
+    }
+
+    @Auth
+    @GetMapping("/geo")
+    public AjaxResult geo() {
+        return AjaxResult.success(dnsPlatformResolutionDomainNameZoneService.geo());
+    }
+
 }

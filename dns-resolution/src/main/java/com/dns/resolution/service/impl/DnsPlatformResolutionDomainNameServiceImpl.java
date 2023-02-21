@@ -75,7 +75,13 @@ public class DnsPlatformResolutionDomainNameServiceImpl implements DnsPlatformRe
             Name master = null;
             String domainName = null;
             try {
-                domainName = IDN.toASCII(domainNameBody.getDomainName().toLowerCase()) + ".";
+                domainName = domainNameBody.getDomainName();
+                StringBuilder domainNameBuilder = new StringBuilder();
+                int domainNameLength = domainName.length();
+                for (int index = 0; index < domainNameLength; index++) {
+                    domainNameBuilder.append(IDN.toASCII(String.valueOf(domainName.charAt(index))));
+                }
+                domainName = domainNameBuilder + ".";
                 master = new Name(domainName);
             } catch (Exception exception) {
                 resultMap.put("message", "Domain name format error");
@@ -264,7 +270,17 @@ public class DnsPlatformResolutionDomainNameServiceImpl implements DnsPlatformRe
         domainNameBody.setUserId(authUtils.getLoginUser().getUserId());
         domainNameBody.setPageSize(10);
         startPage();
-        return pageUtils.getDataTable(dnsPlatformResolutionDomainNameMapper.selectDnsPlatformResolutionDomainNameViewListByUserId(domainNameBody));
+        List<DnsPlatformResolutionDomainNameView> dnsPlatformResolutionDomainNameViewList = dnsPlatformResolutionDomainNameMapper.selectDnsPlatformResolutionDomainNameViewListByUserId(domainNameBody);
+        for (DnsPlatformResolutionDomainNameView dnsPlatformResolutionDomainNameView : dnsPlatformResolutionDomainNameViewList) {
+            String domainName = dnsPlatformResolutionDomainNameView.getDomainName();
+            StringBuilder domainNameBuilder = new StringBuilder();
+            int domainNameLength = domainName.length();
+            for (int index = 0; index < domainNameLength; index++) {
+                domainNameBuilder.append(IDN.toUnicode(String.valueOf(domainName.charAt(index))));
+            }
+            dnsPlatformResolutionDomainNameView.setDomainName(domainNameBuilder.toString());
+        }
+        return pageUtils.getDataTable(dnsPlatformResolutionDomainNameViewList);
     }
 
 

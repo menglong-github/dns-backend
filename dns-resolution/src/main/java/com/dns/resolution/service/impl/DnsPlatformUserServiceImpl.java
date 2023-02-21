@@ -14,6 +14,7 @@ import com.dns.resolution.domain.dto.DnsPlatformUserInfo;
 import com.dns.resolution.domain.req.UserBody;
 import com.dns.resolution.mapper.DnsPlatformUserInfoMapper;
 import com.dns.resolution.service.DnsPlatformUserService;
+import com.dns.resolution.utils.AuthUtils;
 import com.dns.resolution.utils.MailUtils;
 import com.dns.resolution.utils.SnowflakeUtils;
 import io.jsonwebtoken.Jwts;
@@ -21,6 +22,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.IDN;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,49 +44,61 @@ public class DnsPlatformUserServiceImpl implements DnsPlatformUserService {
     @Autowired
     private SnowflakeUtils snowflakeUtils;
 
+    @Autowired
+    private AuthUtils authUtils;
+
     @Override
     public Map<String, Object> registerCheckService(UserBody userBody) {
         Map<String, Object> resultMap = new HashMap<>();
         if (StringUtils.isEmpty(userBody.getEmail())) {
             resultMap.put("message", "Please input the email address");
             resultMap.put("code", 100001);
-        } else if (!Pattern.matches(RegexConstants.REGEX_EMAIL, userBody.getEmail())) {
-            resultMap.put("message", "Email format error");
-            resultMap.put("code", 100002);
         } else {
-            String sendRegisterEmailIpCacheKey = RegisterConstants.SEND_REGISTER_EMAIL_IP_CACHE_KEY + IpUtils.getIpAddr(ServletUtils.getRequest());
-            long sendRegisterEmailIpLimitCount = redisCache.redisTemplate.boundValueOps(sendRegisterEmailIpCacheKey).increment();
-            if (sendRegisterEmailIpLimitCount <= RegisterConstants.SEND_REGISTER_EMAIL_IP_LIMIT_COUNT) {
-                String sendRegisterEmailCode = redisCache.getCacheObject(RegisterConstants.SEND_REGISTER_EMAIL_CODE_CACHE_KEY + userBody.getEmail());
-                if (StringUtils.isEmpty(sendRegisterEmailCode)) {
-                    if (dnsPlatformUserInfoMapper.selectDnsPlatformUserInfoCountByEmail(userBody.getEmail()) == 0) {
-                        String code = IdUtils.fastSimpleUUID();
-                        boolean sendResult = mailUtils.sendEmail(userBody.getEmail(), "Welcome to register Root Servers World", "Register Code: " + code);
-                        if (sendResult) {
-                            redisCache.setCacheObject(RegisterConstants.SEND_REGISTER_EMAIL_CODE_CACHE_KEY + userBody.getEmail(), code, 5, TimeUnit.MINUTES);
-                            resultMap.put("message", "The verification code has been sent, please pay attention to check");
-                            resultMap.put("code", 0);
+            String email = userBody.getEmail();
+            int emailLength = email.length();
+            StringBuilder emailBuilder = new StringBuilder();
+            for (int index = 0; index < emailLength; index++) {
+                emailBuilder.append(IDN.toASCII(String.valueOf(email.charAt(index))));
+            }
+            userBody.setEmail(emailBuilder.toString());
+            if (!Pattern.matches(RegexConstants.REGEX_EMAIL, userBody.getEmail())) {
+                resultMap.put("message", "Email format error");
+                resultMap.put("code", 100002);
+            } else {
+                String sendRegisterEmailIpCacheKey = RegisterConstants.SEND_REGISTER_EMAIL_IP_CACHE_KEY + IpUtils.getIpAddr(ServletUtils.getRequest());
+                long sendRegisterEmailIpLimitCount = redisCache.redisTemplate.boundValueOps(sendRegisterEmailIpCacheKey).increment();
+                if (sendRegisterEmailIpLimitCount <= RegisterConstants.SEND_REGISTER_EMAIL_IP_LIMIT_COUNT) {
+                    String sendRegisterEmailCode = redisCache.getCacheObject(RegisterConstants.SEND_REGISTER_EMAIL_CODE_CACHE_KEY + userBody.getEmail());
+                    if (StringUtils.isEmpty(sendRegisterEmailCode)) {
+                        if (dnsPlatformUserInfoMapper.selectDnsPlatformUserInfoCountByEmail(userBody.getEmail()) == 0) {
+                            String code = IdUtils.fastSimpleUUID();
+                            boolean sendResult = mailUtils.sendEmail(userBody.getEmail(), "Welcome to register Root Servers World", "Register Code: " + code);
+                            if (sendResult) {
+                                redisCache.setCacheObject(RegisterConstants.SEND_REGISTER_EMAIL_CODE_CACHE_KEY + userBody.getEmail(), code, 5, TimeUnit.MINUTES);
+                                resultMap.put("message", "The verification code has been sent, please pay attention to check");
+                                resultMap.put("code", 0);
+                            } else {
+                                resultMap.put("message", "Failed to send verification code, please try again");
+                                resultMap.put("code", 100005);
+                                redisCache.redisTemplate.boundValueOps(sendRegisterEmailIpCacheKey).decrement();
+                            }
                         } else {
-                            resultMap.put("message", "Failed to send verification code, please try again");
-                            resultMap.put("code", 100005);
+                            resultMap.put("message", "Email address has been registered");
+                            resultMap.put("code", 100004);
                             redisCache.redisTemplate.boundValueOps(sendRegisterEmailIpCacheKey).decrement();
                         }
                     } else {
-                        resultMap.put("message", "Email address has been registered");
-                        resultMap.put("code", 100004);
+                        resultMap.put("message", "The verification code has been sent, please pay attention to check");
+                        resultMap.put("code", 0);
                         redisCache.redisTemplate.boundValueOps(sendRegisterEmailIpCacheKey).decrement();
                     }
                 } else {
-                    resultMap.put("message", "The verification code has been sent, please pay attention to check");
-                    resultMap.put("code", 0);
-                    redisCache.redisTemplate.boundValueOps(sendRegisterEmailIpCacheKey).decrement();
+                    if (sendRegisterEmailIpLimitCount == (RegisterConstants.SEND_REGISTER_EMAIL_IP_LIMIT_COUNT + 1)) {
+                        redisCache.expire(sendRegisterEmailIpCacheKey, 1, TimeUnit.HOURS);
+                    }
+                    resultMap.put("message", "Verification codes are sent frequently, please try again in an hour");
+                    resultMap.put("code", 100003);
                 }
-            } else {
-                if (sendRegisterEmailIpLimitCount == (RegisterConstants.SEND_REGISTER_EMAIL_IP_LIMIT_COUNT + 1)) {
-                    redisCache.expire(sendRegisterEmailIpCacheKey, 1, TimeUnit.HOURS);
-                }
-                resultMap.put("message", "Verification codes are sent frequently, please try again in an hour");
-                resultMap.put("code", 100003);
             }
         }
         return resultMap;
@@ -106,6 +120,13 @@ public class DnsPlatformUserServiceImpl implements DnsPlatformUserService {
             resultMap.put("message", "Please input verification code");
             resultMap.put("code", 100004);
         } else {
+            String email = userBody.getEmail();
+            int emailLength = email.length();
+            StringBuilder emailBuilder = new StringBuilder();
+            for (int index = 0; index < emailLength; index++) {
+                emailBuilder.append(IDN.toASCII(String.valueOf(email.charAt(index))));
+            }
+            userBody.setEmail(emailBuilder.toString());
             String verifyRegisterEmailIpCacheKey = RegisterConstants.VERIFY_REGISTER_EMAIL_IP_CACHE_KEY + IpUtils.getIpAddr(ServletUtils.getRequest());
             long verifyRegisterEmailIpLimitCount = redisCache.redisTemplate.boundValueOps(verifyRegisterEmailIpCacheKey).increment();
             if (verifyRegisterEmailIpLimitCount <= RegisterConstants.VERIFY_REGISTER_EMAIL_IP_LIMIT_COUNT) {
@@ -155,43 +176,52 @@ public class DnsPlatformUserServiceImpl implements DnsPlatformUserService {
         if (StringUtils.isEmpty(userBody.getEmail())) {
             resultMap.put("message", "Please input the email address");
             resultMap.put("code", 100001);
-        } else if (!Pattern.matches(RegexConstants.REGEX_EMAIL, userBody.getEmail())) {
-            resultMap.put("message", "Email format error");
-            resultMap.put("code", 100002);
         } else {
-            String sendResetEmailCode = redisCache.getCacheObject(ResetConstants.SEND_RESET_EMAIL_CODE_CACHE_KEY + userBody.getEmail());
-            String sendResetEmailIpCacheKey = ResetConstants.SEND_RESET_EMAIL_IP_CACHE_KEY + IpUtils.getIpAddr(ServletUtils.getRequest());
-            long sendResetEmailIpLimitCount = redisCache.redisTemplate.boundValueOps(sendResetEmailIpCacheKey).increment();
-            if (sendResetEmailIpLimitCount <= ResetConstants.SEND_RESET_EMAIL_IP_LIMIT_COUNT) {
-                if (StringUtils.isEmpty(sendResetEmailCode)) {
-                    if (dnsPlatformUserInfoMapper.selectDnsPlatformUserInfoCountByEmail(userBody.getEmail()) == 0) {
-                        resultMap.put("message", "Email address is not registered");
-                        resultMap.put("code", 100004);
-                        redisCache.redisTemplate.boundValueOps(sendResetEmailIpCacheKey).decrement();
-                    } else {
-                        String code = IdUtils.fastSimpleUUID();
-                        boolean sendResult = mailUtils.sendEmail(userBody.getEmail(), "Welcome to reset Root Servers World", "Reset Code: " + code);
-                        if (sendResult) {
-                            redisCache.setCacheObject(ResetConstants.SEND_RESET_EMAIL_CODE_CACHE_KEY + userBody.getEmail(), code, 5, TimeUnit.MINUTES);
-                            resultMap.put("message", "The verification code has been sent, please pay attention to check");
-                            resultMap.put("code", 0);
-                        } else {
-                            resultMap.put("message", "Failed to send verification code, please try again");
-                            resultMap.put("code", 100005);
+            String email = userBody.getEmail();
+            int emailLength = email.length();
+            StringBuilder emailBuilder = new StringBuilder();
+            for (int index = 0; index < emailLength; index++) {
+                emailBuilder.append(IDN.toASCII(String.valueOf(email.charAt(index))));
+            }
+            userBody.setEmail(emailBuilder.toString());
+            if (!Pattern.matches(RegexConstants.REGEX_EMAIL, userBody.getEmail())) {
+                resultMap.put("message", "Email format error");
+                resultMap.put("code", 100002);
+            } else {
+                String sendResetEmailCode = redisCache.getCacheObject(ResetConstants.SEND_RESET_EMAIL_CODE_CACHE_KEY + userBody.getEmail());
+                String sendResetEmailIpCacheKey = ResetConstants.SEND_RESET_EMAIL_IP_CACHE_KEY + IpUtils.getIpAddr(ServletUtils.getRequest());
+                long sendResetEmailIpLimitCount = redisCache.redisTemplate.boundValueOps(sendResetEmailIpCacheKey).increment();
+                if (sendResetEmailIpLimitCount <= ResetConstants.SEND_RESET_EMAIL_IP_LIMIT_COUNT) {
+                    if (StringUtils.isEmpty(sendResetEmailCode)) {
+                        if (dnsPlatformUserInfoMapper.selectDnsPlatformUserInfoCountByEmail(userBody.getEmail()) == 0) {
+                            resultMap.put("message", "Email address is not registered");
+                            resultMap.put("code", 100004);
                             redisCache.redisTemplate.boundValueOps(sendResetEmailIpCacheKey).decrement();
+                        } else {
+                            String code = IdUtils.fastSimpleUUID();
+                            boolean sendResult = mailUtils.sendEmail(userBody.getEmail(), "Welcome to reset Root Servers World", "Reset Code: " + code);
+                            if (sendResult) {
+                                redisCache.setCacheObject(ResetConstants.SEND_RESET_EMAIL_CODE_CACHE_KEY + userBody.getEmail(), code, 5, TimeUnit.MINUTES);
+                                resultMap.put("message", "The verification code has been sent, please pay attention to check");
+                                resultMap.put("code", 0);
+                            } else {
+                                resultMap.put("message", "Failed to send verification code, please try again");
+                                resultMap.put("code", 100005);
+                                redisCache.redisTemplate.boundValueOps(sendResetEmailIpCacheKey).decrement();
+                            }
                         }
+                    } else {
+                        resultMap.put("message", "The verification code has been sent, please pay attention to check");
+                        resultMap.put("code", 0);
+                        redisCache.redisTemplate.boundValueOps(sendResetEmailIpCacheKey).decrement();
                     }
                 } else {
-                    resultMap.put("message", "The verification code has been sent, please pay attention to check");
-                    resultMap.put("code", 0);
-                    redisCache.redisTemplate.boundValueOps(sendResetEmailIpCacheKey).decrement();
+                    if (sendResetEmailIpLimitCount == (ResetConstants.SEND_RESET_EMAIL_IP_LIMIT_COUNT + 1)) {
+                        redisCache.expire(sendResetEmailIpCacheKey, 1, TimeUnit.HOURS);
+                    }
+                    resultMap.put("message", "Verification codes are sent frequently, please try again in an hour");
+                    resultMap.put("code", 100003);
                 }
-            } else {
-                if (sendResetEmailIpLimitCount == (ResetConstants.SEND_RESET_EMAIL_IP_LIMIT_COUNT + 1)) {
-                    redisCache.expire(sendResetEmailIpCacheKey, 1, TimeUnit.HOURS);
-                }
-                resultMap.put("message", "Verification codes are sent frequently, please try again in an hour");
-                resultMap.put("code", 100003);
             }
         }
         return resultMap;
@@ -213,6 +243,13 @@ public class DnsPlatformUserServiceImpl implements DnsPlatformUserService {
             resultMap.put("message", "Please input verification code");
             resultMap.put("code", 100004);
         } else {
+            String email = userBody.getEmail();
+            int emailLength = email.length();
+            StringBuilder emailBuilder = new StringBuilder();
+            for (int index = 0; index < emailLength; index++) {
+                emailBuilder.append(IDN.toASCII(String.valueOf(email.charAt(index))));
+            }
+            userBody.setEmail(emailBuilder.toString());
             String code = redisCache.getCacheObject(ResetConstants.SEND_RESET_EMAIL_CODE_CACHE_KEY + userBody.getEmail());
             String verifyResetEmailIpCacheKey = ResetConstants.VERIFY_RESET_EMAIL_IP_CACHE_KEY + IpUtils.getIpAddr(ServletUtils.getRequest());
             long verifyResetEmailIpLimitCount = redisCache.redisTemplate.boundValueOps(verifyResetEmailIpCacheKey).increment();
@@ -261,6 +298,13 @@ public class DnsPlatformUserServiceImpl implements DnsPlatformUserService {
             resultMap.put("message", "Please input password");
             resultMap.put("code", 100002);
         } else {
+            String email = userBody.getEmail();
+            int emailLength = email.length();
+            StringBuilder emailBuilder = new StringBuilder();
+            for (int index = 0; index < emailLength; index++) {
+                emailBuilder.append(IDN.toASCII(String.valueOf(email.charAt(index))));
+            }
+            userBody.setEmail(emailBuilder.toString());
             String loginErrorIpCacheKey = LoginConstants.LOGIN_ERROR_IP_CACHE_KEY + IpUtils.getIpAddr(ServletUtils.getRequest());
             long loginErrorIpLimitCount = redisCache.redisTemplate.boundValueOps(loginErrorIpCacheKey).increment();
             if (loginErrorIpLimitCount <= LoginConstants.LOGIN_ERROR_IP_LIMIT_COUNT) {
@@ -294,5 +338,10 @@ public class DnsPlatformUserServiceImpl implements DnsPlatformUserService {
             }
         }
         return resultMap;
+    }
+
+    @Override
+    public void logout() {
+        authUtils.logout();
     }
 }

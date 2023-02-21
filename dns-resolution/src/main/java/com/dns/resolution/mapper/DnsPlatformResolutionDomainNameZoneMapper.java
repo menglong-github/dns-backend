@@ -12,7 +12,7 @@ public interface DnsPlatformResolutionDomainNameZoneMapper {
 
     public List<DnsPlatformResolutionDomainNameZone> selectDnsPlatformResolutionDomainNameZoneByDomainId(Long domainId);
 
-    public List<DnsPlatformResolutionDomainNameZoneView> selectDnsPlatformResolutionDomainNameZoneViewByDomainId(Long domainId);
+    public List<DnsPlatformResolutionDomainNameZoneView> selectDnsPlatformResolutionDomainNameZoneSimpleViewByDomainId(Long domainId);
 
     public int updateDnsPlatformResolutionDomainNameZone(DnsPlatformResolutionDomainNameZone dnsPlatformResolutionDomainNameZone);
 

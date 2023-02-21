@@ -39,4 +39,18 @@ public class DnsPlatformUserController {
     public AjaxResult login(@RequestBody UserBody userBody) {
         return AjaxResult.success(dnsPlatformUserService.login(userBody));
     }
+
+    @Auth
+    @GetMapping("/auth")
+    public AjaxResult auth() {
+        return AjaxResult.success();
+    }
+
+    @Auth
+    @DeleteMapping("/logout")
+    public AjaxResult logout() {
+        dnsPlatformUserService.logout();
+        return AjaxResult.success();
+    }
+
 }

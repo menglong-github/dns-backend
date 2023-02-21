@@ -7,6 +7,7 @@ import com.dns.resolution.constants.DomainNameConstants;
 import com.dns.resolution.domain.dto.DnsPlatformResolutionDomainName;
 import com.dns.resolution.domain.dto.DnsPlatformResolutionDomainNameZone;
 import com.dns.resolution.domain.req.DomainNameBody;
+import com.dns.resolution.domain.res.DnsPlatformResolutionDomainNameZoneSimpleGeo;
 import com.dns.resolution.domain.res.DnsPlatformResolutionDomainNameZoneView;
 import com.dns.resolution.mapper.DnsPlatformResolutionDomainNameMapper;
 import com.dns.resolution.mapper.DnsPlatformResolutionDomainNameZoneMapper;
@@ -53,41 +54,31 @@ public class DnsPlatformResolutionDomainNameZoneServiceImpl implements DnsPlatfo
     private RabbitMqUtils rabbitMqUtils;
 
     @Override
-    public List<DnsPlatformResolutionDomainNameZoneView> list(DomainNameBody domainNameBody) {
-        List<DnsPlatformResolutionDomainNameZoneView> dnsPlatformResolutionDomainNameZoneViewList = null;
+    public Map<String, Object> list(DomainNameBody domainNameBody) {
+        Map<String, Object> resultMap = new HashMap<>();
+        List<DnsPlatformResolutionDomainNameZoneView> dnsPlatformResolutionDomainNameZoneSimpleViewList = null;
         if (domainNameBody.getDomainId() != null) {
             DnsPlatformResolutionDomainName dnsPlatformResolutionDomainName = dnsPlatformResolutionDomainNameMapper.selectDnsPlatformResolutionDomainNameByDomainId(domainNameBody.getDomainId());
             if ((dnsPlatformResolutionDomainName != null)) {
                 Long userId = authUtils.getLoginUser().getUserId();
                 if (userId.longValue() == dnsPlatformResolutionDomainName.getUserId().longValue()) {
-                    dnsPlatformResolutionDomainNameZoneViewList = dnsPlatformResolutionDomainNameZoneMapper.selectDnsPlatformResolutionDomainNameZoneViewByDomainId(domainNameBody.getDomainId());
-                    if (dnsPlatformResolutionDomainName.getDnssecEnable()) {
-                        dnsPlatformResolutionDomainNameZoneViewList.forEach(dnsPlatformResolutionDomainNameZoneRaw -> {
-                            InputStream inputStream = new ByteArrayInputStream(dnsPlatformResolutionDomainNameZoneRaw.getZoneContent().getBytes());
-                            try {
-                                Zone zone = new Zone(new Name(dnsPlatformResolutionDomainName.getDomainName()), inputStream);
-                                List<Record> deleteRecordList = new ArrayList<>();
-                                Iterator<RRset> rRsetIterator = zone.iterator();
-                                while (rRsetIterator.hasNext()) {
-                                    RRset rRset = rRsetIterator.next();
-                                    deleteRecordList.addAll(rRset.sigs());
-                                    if ((rRset.getType() == Type.DNSKEY) || (rRset.getType() == Type.NSEC)) {
-                                        deleteRecordList.addAll(rRset.rrs());
-                                    }
-                                }
-                                deleteRecordList.forEach(record -> {
-                                    zone.removeRecord(record);
-                                });
-                                dnsPlatformResolutionDomainNameZoneRaw.setZoneContent(zone.toString());
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
-                    }
+                    dnsPlatformResolutionDomainNameZoneSimpleViewList = dnsPlatformResolutionDomainNameZoneMapper.selectDnsPlatformResolutionDomainNameZoneSimpleViewByDomainId(domainNameBody.getDomainId());
+                    resultMap.put("message", "Operation succeeded");
+                    resultMap.put("code", 0);
+                    resultMap.put("zone", dnsPlatformResolutionDomainNameZoneSimpleViewList);
+                } else {
+                    resultMap.put("message", "Please operate your own domain name");
+                    resultMap.put("code", 100001);
                 }
+            } else {
+                resultMap.put("message", "Domain name does not exist");
+                resultMap.put("code", 100002);
             }
+        } else {
+            resultMap.put("message", "Please select the domain name to operate");
+            resultMap.put("code", 100003);
         }
-        return dnsPlatformResolutionDomainNameZoneViewList;
+        return resultMap;
     }
 
     @Transactional
@@ -174,7 +165,6 @@ public class DnsPlatformResolutionDomainNameZoneServiceImpl implements DnsPlatfo
                                                 zone.addRecord(DNSSEC.sign(rRset, zskRecord, zskPrivateKey, inception, expiration));
                                             }
                                         }
-                                        dnsPlatformResolutionDomainNameZone.setZoneContent(zone.toString());
                                     } catch (Exception e) {
                                         resultMap.put("message", "Dnssec error");
                                         resultMap.put("code", 100006);
@@ -184,6 +174,7 @@ public class DnsPlatformResolutionDomainNameZoneServiceImpl implements DnsPlatfo
                                 dnsPlatformResolutionDomainNameZone.setZoneId(snowflakeUtils.nextId());
                                 dnsPlatformResolutionDomainNameZone.setCreateTime(nowTime);
                                 dnsPlatformResolutionDomainNameZone.setUpdateTime(nowTime);
+                                dnsPlatformResolutionDomainNameZone.setZoneContent(zone.toString());
                                 dnsPlatformResolutionDomainNameZoneMapper.insertDnsPlatformResolutionDomainNameZone(dnsPlatformResolutionDomainNameZone);
                                 TransferZone transferZone = new TransferZone();
                                 transferZone.setMaster(dnsPlatformResolutionDomainName.getDomainName());
@@ -319,7 +310,7 @@ public class DnsPlatformResolutionDomainNameZoneServiceImpl implements DnsPlatfo
                                 }
                                 long nowTime = System.currentTimeMillis();
                                 dnsPlatformResolutionDomainNameZoneTrust.setUpdateTime(nowTime);
-                                dnsPlatformResolutionDomainNameZoneTrust.setZoneContent(dnsPlatformResolutionDomainNameZone.getZoneContent());
+                                dnsPlatformResolutionDomainNameZoneTrust.setZoneContent(zone.toString());
                                 dnsPlatformResolutionDomainNameZoneMapper.updateDnsPlatformResolutionDomainNameZone(dnsPlatformResolutionDomainNameZoneTrust);
                                 TransferZone transferZone = new TransferZone();
                                 transferZone.setMaster(dnsPlatformResolutionDomainName.getDomainName());
@@ -441,5 +432,86 @@ public class DnsPlatformResolutionDomainNameZoneServiceImpl implements DnsPlatfo
             }
         }
         return resultMap;
+    }
+
+    @Override
+    public Map<String, Object> info(DnsPlatformResolutionDomainNameZone dnsPlatformResolutionDomainNameZone) {
+        Map<String, Object> resultMap = new HashMap<>();
+        if (dnsPlatformResolutionDomainNameZone.getZoneId() == null) {
+            resultMap.put("message", "Please select the zone to operate");
+            resultMap.put("code", 100001);
+        } else {
+            DnsPlatformResolutionDomainNameZone dnsPlatformResolutionDomainNameZoneTrust = dnsPlatformResolutionDomainNameZoneMapper.selectDnsPlatformResolutionDomainNameZoneByZoneId(dnsPlatformResolutionDomainNameZone.getZoneId());
+            if (dnsPlatformResolutionDomainNameZoneTrust == null) {
+                resultMap.put("message", "Zone does not exist");
+                resultMap.put("code", 100002);
+            } else {
+                DnsPlatformResolutionDomainName dnsPlatformResolutionDomainName = dnsPlatformResolutionDomainNameMapper.selectDnsPlatformResolutionDomainNameByDomainId(dnsPlatformResolutionDomainNameZoneTrust.getDomainId());
+                if (dnsPlatformResolutionDomainName == null) {
+                    resultMap.put("message", "Domain name does not exist");
+                    resultMap.put("code", 100003);
+                } else {
+                    Long userId = authUtils.getLoginUser().getUserId();
+                    if (userId.longValue() == dnsPlatformResolutionDomainName.getUserId().longValue()) {
+                        if (dnsPlatformResolutionDomainName.getDnssecEnable()) {
+                            InputStream inputStream = new ByteArrayInputStream(dnsPlatformResolutionDomainNameZoneTrust.getZoneContent().getBytes());
+                            try {
+                                Zone zone = new Zone(new Name(dnsPlatformResolutionDomainName.getDomainName()), inputStream);
+                                List<Record> deleteRecordList = new ArrayList<>();
+                                Iterator<RRset> rRsetIterator = zone.iterator();
+                                while (rRsetIterator.hasNext()) {
+                                    RRset rRset = rRsetIterator.next();
+                                    deleteRecordList.addAll(rRset.sigs());
+                                    if ((rRset.getType() == Type.DNSKEY) || (rRset.getType() == Type.NSEC)) {
+                                        deleteRecordList.addAll(rRset.rrs());
+                                    }
+                                }
+                                deleteRecordList.forEach(record -> {
+                                    zone.removeRecord(record);
+                                });
+                                String originZoneContent = zone.toString();
+                                int originZoneContentLength = originZoneContent.length();
+                                StringBuilder idnZoneContent = new StringBuilder();
+                                for (int index = 0; index < originZoneContentLength; index++) {
+                                    idnZoneContent.append(IDN.toUnicode(String.valueOf(originZoneContent.charAt(index))));
+                                }
+                                resultMap.put("message", "Operation succeeded");
+                                resultMap.put("code", 0);
+                                resultMap.put("zone", idnZoneContent.toString());
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                        } else {
+                            String originZoneContent = dnsPlatformResolutionDomainNameZoneTrust.getZoneContent();
+                            int originZoneContentLength = originZoneContent.length();
+                            StringBuilder idnZoneContent = new StringBuilder();
+                            for (int index = 0; index < originZoneContentLength; index++) {
+                                idnZoneContent.append(IDN.toUnicode(String.valueOf(originZoneContent.charAt(index))));
+                            }
+                            resultMap.put("message", "Operation succeeded");
+                            resultMap.put("code", 0);
+                            resultMap.put("zone", idnZoneContent.toString());
+                        }
+                    } else {
+                        resultMap.put("message", "Please operate your own domain name");
+                        resultMap.put("code", 100004);
+                    }
+                }
+            }
+        }
+        return resultMap;
+    }
+
+    @Override
+    public List<DnsPlatformResolutionDomainNameZoneSimpleGeo> geo() {
+        List<SysDictData> geoDictList = DictUtils.getDictCache(DomainNameConstants.SUPPORT_RESOLUTION_DOMAIN_NAME_GEO_DICT_KEY);
+        List<DnsPlatformResolutionDomainNameZoneSimpleGeo> simpleGeoList = new ArrayList<>();
+        for (SysDictData geoData : geoDictList) {
+            DnsPlatformResolutionDomainNameZoneSimpleGeo dnsPlatformResolutionDomainNameZoneSimpleGeo = new DnsPlatformResolutionDomainNameZoneSimpleGeo();
+            dnsPlatformResolutionDomainNameZoneSimpleGeo.setLabel(geoData.getDictLabel());
+            dnsPlatformResolutionDomainNameZoneSimpleGeo.setValue(geoData.getDictValue());
+            simpleGeoList.add(dnsPlatformResolutionDomainNameZoneSimpleGeo);
+        }
+        return simpleGeoList;
     }
 }
