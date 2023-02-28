@@ -1,13 +1,13 @@
 package com.dns.common.utils.ip;
 
-import com.dns.common.config.DnsConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.dns.common.config.DnsConfig;
 import com.dns.common.constant.Constants;
 import com.dns.common.utils.StringUtils;
 import com.dns.common.utils.http.HttpUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 获取地址类

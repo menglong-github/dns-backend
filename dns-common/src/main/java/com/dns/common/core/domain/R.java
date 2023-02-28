@@ -1,7 +1,8 @@
 package com.dns.common.core.domain;
 
-import java.io.Serializable;
 import com.dns.common.constant.HttpStatus;
+
+import java.io.Serializable;
 
 /**
  * 响应信息主体

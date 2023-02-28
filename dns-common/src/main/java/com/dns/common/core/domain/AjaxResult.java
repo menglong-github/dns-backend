@@ -1,8 +1,9 @@
 package com.dns.common.core.domain;
 
-import java.util.HashMap;
 import com.dns.common.constant.HttpStatus;
 import com.dns.common.utils.StringUtils;
+
+import java.util.HashMap;
 
 /**
  * 操作消息提醒

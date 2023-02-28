@@ -1,8 +1,5 @@
 package com.dns.system.service.impl;
 
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.dns.common.constant.UserConstants;
 import com.dns.common.exception.ServiceException;
 import com.dns.common.utils.StringUtils;
@@ -10,6 +7,10 @@ import com.dns.system.domain.SysPost;
 import com.dns.system.mapper.SysPostMapper;
 import com.dns.system.mapper.SysUserPostMapper;
 import com.dns.system.service.ISysPostService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 岗位信息 服务层处理

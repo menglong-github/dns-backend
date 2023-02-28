@@ -1,6 +1,7 @@
 package com.dns.common.xss;
 
 import com.dns.common.utils.StringUtils;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Matcher;

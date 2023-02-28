@@ -1,8 +1,8 @@
 package com.dns.quartz.util;
 
+import com.dns.quartz.domain.SysJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
-import com.dns.quartz.domain.SysJob;
 
 /**
  * 定时任务处理（禁止并发执行）

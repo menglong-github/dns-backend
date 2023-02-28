@@ -1,11 +1,5 @@
 package com.dns.quartz.util;
 
-import java.util.Date;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.dns.common.constant.Constants;
 import com.dns.common.constant.ScheduleConstants;
 import com.dns.common.utils.ExceptionUtil;
@@ -15,6 +9,13 @@ import com.dns.common.utils.spring.SpringUtils;
 import com.dns.quartz.domain.SysJob;
 import com.dns.quartz.domain.SysJobLog;
 import com.dns.quartz.service.ISysJobLogService;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Date;
 
 /**
  * 抽象quartz调用

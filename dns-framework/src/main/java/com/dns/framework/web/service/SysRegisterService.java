@@ -1,7 +1,5 @@
 package com.dns.framework.web.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import com.dns.common.constant.CacheConstants;
 import com.dns.common.constant.Constants;
 import com.dns.common.constant.UserConstants;
@@ -17,6 +15,8 @@ import com.dns.framework.manager.AsyncManager;
 import com.dns.framework.manager.factory.AsyncFactory;
 import com.dns.system.service.ISysConfigService;
 import com.dns.system.service.ISysUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * 注册校验方法

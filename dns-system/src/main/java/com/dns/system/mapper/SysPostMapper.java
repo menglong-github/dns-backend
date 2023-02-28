@@ -1,7 +1,8 @@
 package com.dns.system.mapper;
 
-import java.util.List;
 import com.dns.system.domain.SysPost;
+
+import java.util.List;
 
 /**
  * 岗位信息 数据层

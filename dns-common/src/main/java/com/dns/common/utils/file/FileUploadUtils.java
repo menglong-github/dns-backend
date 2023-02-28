@@ -1,13 +1,6 @@
 package com.dns.common.utils.file;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.Objects;
-
 import com.dns.common.config.DnsConfig;
-import org.apache.commons.io.FilenameUtils;
-import org.springframework.web.multipart.MultipartFile;
 import com.dns.common.constant.Constants;
 import com.dns.common.exception.file.FileNameLengthLimitExceededException;
 import com.dns.common.exception.file.FileSizeLimitExceededException;
@@ -15,6 +8,13 @@ import com.dns.common.exception.file.InvalidExtensionException;
 import com.dns.common.utils.DateUtils;
 import com.dns.common.utils.StringUtils;
 import com.dns.common.utils.uuid.Seq;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 /**
  * 文件上传工具类

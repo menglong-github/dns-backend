@@ -1,12 +1,13 @@
 package com.dns.system.domain;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import com.dns.common.annotation.Excel;
 import com.dns.common.annotation.Excel.ColumnType;
 import com.dns.common.core.domain.BaseEntity;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 /**
  * 参数配置表 sys_config

@@ -1,7 +1,8 @@
 package com.dns.generator.service;
 
-import java.util.List;
 import com.dns.generator.domain.GenTableColumn;
+
+import java.util.List;
 
 /**
  * 业务字段 服务层

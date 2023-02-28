@@ -1,12 +1,13 @@
 package com.dns.common.utils;
 
-import java.util.Collection;
-import java.util.List;
 import com.alibaba.fastjson2.JSONArray;
 import com.dns.common.constant.CacheConstants;
 import com.dns.common.core.domain.entity.SysDictData;
 import com.dns.common.core.redis.RedisCache;
 import com.dns.common.utils.spring.SpringUtils;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * 字典工具类

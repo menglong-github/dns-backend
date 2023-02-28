@@ -1,8 +1,5 @@
 package com.dns.resolution.constants;
 
-import dns.core.Name;
-import dns.core.SOARecord;
-
 public class DomainNameConstants {
     public static final String RESOLUTION_DOMAIN_NAME_LOCK_CACHE_KEY = "RESOLUTION_DOMAIN_NAME_LOCK:";
 

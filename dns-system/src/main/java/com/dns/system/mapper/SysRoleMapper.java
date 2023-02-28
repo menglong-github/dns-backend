@@ -1,7 +1,8 @@
 package com.dns.system.mapper;
 
-import java.util.List;
 import com.dns.common.core.domain.entity.SysRole;
+
+import java.util.List;
 
 /**
  * 角色表 数据层

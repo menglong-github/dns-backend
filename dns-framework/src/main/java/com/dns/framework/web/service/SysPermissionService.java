@@ -1,14 +1,15 @@
 package com.dns.framework.web.service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import com.dns.common.core.domain.entity.SysRole;
 import com.dns.common.core.domain.entity.SysUser;
 import com.dns.system.service.ISysMenuService;
 import com.dns.system.service.ISysRoleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 用户权限处理

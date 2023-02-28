@@ -1,10 +1,5 @@
 package com.dns.system.service.impl;
 
-import java.util.Collection;
-import java.util.List;
-import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.dns.common.annotation.DataSource;
 import com.dns.common.constant.CacheConstants;
 import com.dns.common.constant.UserConstants;
@@ -16,6 +11,12 @@ import com.dns.common.utils.StringUtils;
 import com.dns.system.domain.SysConfig;
 import com.dns.system.mapper.SysConfigMapper;
 import com.dns.system.service.ISysConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * 参数配置 服务层实现

@@ -1,7 +1,8 @@
 package com.dns.generator.mapper;
 
-import java.util.List;
 import com.dns.generator.domain.GenTable;
+
+import java.util.List;
 
 /**
  * 业务 数据层

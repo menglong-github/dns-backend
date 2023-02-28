@@ -13,22 +13,19 @@ import com.dns.resolution.mapper.DnsPlatformResolutionDomainNameMapper;
 import com.dns.resolution.mapper.DnsPlatformResolutionDomainNameZoneMapper;
 import com.dns.resolution.service.DnsPlatformResolutionDomainNameZoneService;
 import com.dns.resolution.utils.AuthUtils;
+import com.dns.resolution.utils.IDNUtils;
 import com.dns.resolution.utils.RabbitMqUtils;
 import com.dns.resolution.utils.SnowflakeUtils;
 import com.rabbitmq.client.Channel;
 import dns.core.*;
-import dns.core.utils.base16;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
-import java.net.IDN;
-import java.security.*;
+import java.security.KeyFactory;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
-import java.security.spec.ECGenParameterSpec;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.Instant;
@@ -52,6 +49,9 @@ public class DnsPlatformResolutionDomainNameZoneServiceImpl implements DnsPlatfo
 
     @Autowired
     private RabbitMqUtils rabbitMqUtils;
+
+    @Autowired
+    private IDNUtils idnUtils;
 
     @Override
     public Map<String, Object> list(DomainNameBody domainNameBody) {
@@ -115,13 +115,21 @@ public class DnsPlatformResolutionDomainNameZoneServiceImpl implements DnsPlatfo
                         if (isSupportGeoCode) {
                             Zone zone = null;
                             try {
-                                StringBuilder idnZoneFileContent = new StringBuilder();
-                                String originZoneFileContent = dnsPlatformResolutionDomainNameZone.getZoneContent();
-                                int zoneFileContentLength = dnsPlatformResolutionDomainNameZone.getZoneContent().length();
-                                for (int index = 0; index < zoneFileContentLength; index++) {
-                                    idnZoneFileContent.append(IDN.toASCII(String.valueOf(originZoneFileContent.charAt(index))));
+                                StringBuilder zoneContentBuilder = new StringBuilder();
+                                String[] zoneContentSection = StringUtils.splitByWholeSeparator(dnsPlatformResolutionDomainNameZone.getZoneContent(), "\n");
+                                for (String zoneContentLine : zoneContentSection) {
+                                    String[] zoneContentLineItem = StringUtils.splitByWholeSeparator(zoneContentLine, null);
+                                    for (String zoneContentItem : zoneContentLineItem) {
+                                        String idnContent = idnUtils.toASCII(zoneContentItem);
+                                        if (idnContent == null) {
+                                            throw new RuntimeException();
+                                        } else {
+                                            zoneContentBuilder.append(idnUtils.toASCII(zoneContentItem)).append("\t");
+                                        }
+                                    }
+                                    zoneContentBuilder.append("\n");
                                 }
-                                dnsPlatformResolutionDomainNameZone.setZoneContent(idnZoneFileContent.toString());
+                                dnsPlatformResolutionDomainNameZone.setZoneContent(zoneContentBuilder.toString());
                                 InputStream inputStream = new ByteArrayInputStream(dnsPlatformResolutionDomainNameZone.getZoneContent().getBytes());
                                 zone = new Zone(new Name(dnsPlatformResolutionDomainName.getDomainName()), inputStream);
                                 List<Record> deleteRecordList = new ArrayList<>();
@@ -253,13 +261,21 @@ public class DnsPlatformResolutionDomainNameZoneServiceImpl implements DnsPlatfo
                         if (userId.longValue() == dnsPlatformResolutionDomainName.getUserId().longValue()) {
                             Zone zone = null;
                             try {
-                                StringBuilder idnZoneFileContent = new StringBuilder();
-                                String originZoneFileContent = dnsPlatformResolutionDomainNameZone.getZoneContent();
-                                int zoneFileContentLength = dnsPlatformResolutionDomainNameZone.getZoneContent().length();
-                                for (int index = 0; index < zoneFileContentLength; index++) {
-                                    idnZoneFileContent.append(IDN.toASCII(String.valueOf(originZoneFileContent.charAt(index))));
+                                StringBuilder zoneContentBuilder = new StringBuilder();
+                                String[] zoneContentSection = StringUtils.splitByWholeSeparator(dnsPlatformResolutionDomainNameZone.getZoneContent(), "\n");
+                                for (String zoneContentLine : zoneContentSection) {
+                                    String[] zoneContentLineItem = StringUtils.splitByWholeSeparator(zoneContentLine, null);
+                                    for (String zoneContentItem : zoneContentLineItem) {
+                                        String idnContent = idnUtils.toASCII(zoneContentItem);
+                                        if (idnContent == null) {
+                                            throw new RuntimeException();
+                                        } else {
+                                            zoneContentBuilder.append(idnUtils.toASCII(zoneContentItem)).append("\t");
+                                        }
+                                    }
+                                    zoneContentBuilder.append("\n");
                                 }
-                                dnsPlatformResolutionDomainNameZone.setZoneContent(idnZoneFileContent.toString());
+                                dnsPlatformResolutionDomainNameZone.setZoneContent(zoneContentBuilder.toString());
                                 InputStream inputStream = new ByteArrayInputStream(dnsPlatformResolutionDomainNameZone.getZoneContent().getBytes());
                                 zone = new Zone(new Name(dnsPlatformResolutionDomainName.getDomainName()), inputStream);
                                 List<Record> deleteRecordList = new ArrayList<>();
@@ -469,28 +485,16 @@ public class DnsPlatformResolutionDomainNameZoneServiceImpl implements DnsPlatfo
                                 deleteRecordList.forEach(record -> {
                                     zone.removeRecord(record);
                                 });
-                                String originZoneContent = zone.toString();
-                                int originZoneContentLength = originZoneContent.length();
-                                StringBuilder idnZoneContent = new StringBuilder();
-                                for (int index = 0; index < originZoneContentLength; index++) {
-                                    idnZoneContent.append(IDN.toUnicode(String.valueOf(originZoneContent.charAt(index))));
-                                }
                                 resultMap.put("message", "Operation succeeded");
                                 resultMap.put("code", 0);
-                                resultMap.put("zone", idnZoneContent.toString());
+                                resultMap.put("zone", zone.toString());
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
                         } else {
-                            String originZoneContent = dnsPlatformResolutionDomainNameZoneTrust.getZoneContent();
-                            int originZoneContentLength = originZoneContent.length();
-                            StringBuilder idnZoneContent = new StringBuilder();
-                            for (int index = 0; index < originZoneContentLength; index++) {
-                                idnZoneContent.append(IDN.toUnicode(String.valueOf(originZoneContent.charAt(index))));
-                            }
                             resultMap.put("message", "Operation succeeded");
                             resultMap.put("code", 0);
-                            resultMap.put("zone", idnZoneContent.toString());
+                            resultMap.put("zone", dnsPlatformResolutionDomainNameZoneTrust.getZoneContent());
                         }
                     } else {
                         resultMap.put("message", "Please operate your own domain name");

@@ -1,15 +1,5 @@
 package com.dns.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.dns.common.constant.Constants;
 import com.dns.common.constant.UserConstants;
 import com.dns.common.core.domain.TreeSelect;
@@ -24,6 +14,11 @@ import com.dns.system.mapper.SysMenuMapper;
 import com.dns.system.mapper.SysRoleMapper;
 import com.dns.system.mapper.SysRoleMenuMapper;
 import com.dns.system.service.ISysMenuService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 菜单 业务层处理

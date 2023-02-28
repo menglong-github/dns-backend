@@ -1,8 +1,9 @@
 package com.dns.generator.util;
 
-import java.util.Properties;
-import org.apache.velocity.app.Velocity;
 import com.dns.common.constant.Constants;
+import org.apache.velocity.app.Velocity;
+
+import java.util.Properties;
 
 /**
  * VelocityEngine工厂

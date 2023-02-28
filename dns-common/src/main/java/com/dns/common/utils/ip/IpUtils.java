@@ -1,9 +1,10 @@
 package com.dns.common.utils.ip;
 
+import com.dns.common.utils.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import javax.servlet.http.HttpServletRequest;
-import com.dns.common.utils.StringUtils;
 
 /**
  * 获取IP方法

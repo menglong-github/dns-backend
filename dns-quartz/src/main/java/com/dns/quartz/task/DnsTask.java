@@ -1,7 +1,7 @@
 package com.dns.quartz.task;
 
-import org.springframework.stereotype.Component;
 import com.dns.common.utils.StringUtils;
+import org.springframework.stereotype.Component;
 
 /**
  * 定时任务调度测试

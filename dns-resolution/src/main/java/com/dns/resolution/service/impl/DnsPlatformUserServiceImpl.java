@@ -15,6 +15,7 @@ import com.dns.resolution.domain.req.UserBody;
 import com.dns.resolution.mapper.DnsPlatformUserInfoMapper;
 import com.dns.resolution.service.DnsPlatformUserService;
 import com.dns.resolution.utils.AuthUtils;
+import com.dns.resolution.utils.IDNUtils;
 import com.dns.resolution.utils.MailUtils;
 import com.dns.resolution.utils.SnowflakeUtils;
 import io.jsonwebtoken.Jwts;
@@ -22,9 +23,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.IDN;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -47,6 +46,9 @@ public class DnsPlatformUserServiceImpl implements DnsPlatformUserService {
     @Autowired
     private AuthUtils authUtils;
 
+    @Autowired
+    private IDNUtils idnUtils;
+
     @Override
     public Map<String, Object> registerCheckService(UserBody userBody) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -54,14 +56,8 @@ public class DnsPlatformUserServiceImpl implements DnsPlatformUserService {
             resultMap.put("message", "Please input the email address");
             resultMap.put("code", 100001);
         } else {
-            String email = userBody.getEmail();
-            int emailLength = email.length();
-            StringBuilder emailBuilder = new StringBuilder();
-            for (int index = 0; index < emailLength; index++) {
-                emailBuilder.append(IDN.toASCII(String.valueOf(email.charAt(index))));
-            }
-            userBody.setEmail(emailBuilder.toString());
-            if (!Pattern.matches(RegexConstants.REGEX_EMAIL, userBody.getEmail())) {
+            userBody.setEmail(idnUtils.toASCII(userBody.getEmail()));
+            if ((userBody.getEmail() == null) || !Pattern.matches(RegexConstants.REGEX_EMAIL, userBody.getEmail())) {
                 resultMap.put("message", "Email format error");
                 resultMap.put("code", 100002);
             } else {
@@ -120,13 +116,7 @@ public class DnsPlatformUserServiceImpl implements DnsPlatformUserService {
             resultMap.put("message", "Please input verification code");
             resultMap.put("code", 100004);
         } else {
-            String email = userBody.getEmail();
-            int emailLength = email.length();
-            StringBuilder emailBuilder = new StringBuilder();
-            for (int index = 0; index < emailLength; index++) {
-                emailBuilder.append(IDN.toASCII(String.valueOf(email.charAt(index))));
-            }
-            userBody.setEmail(emailBuilder.toString());
+            userBody.setEmail(idnUtils.toASCII(userBody.getEmail()));
             String verifyRegisterEmailIpCacheKey = RegisterConstants.VERIFY_REGISTER_EMAIL_IP_CACHE_KEY + IpUtils.getIpAddr(ServletUtils.getRequest());
             long verifyRegisterEmailIpLimitCount = redisCache.redisTemplate.boundValueOps(verifyRegisterEmailIpCacheKey).increment();
             if (verifyRegisterEmailIpLimitCount <= RegisterConstants.VERIFY_REGISTER_EMAIL_IP_LIMIT_COUNT) {
@@ -177,14 +167,8 @@ public class DnsPlatformUserServiceImpl implements DnsPlatformUserService {
             resultMap.put("message", "Please input the email address");
             resultMap.put("code", 100001);
         } else {
-            String email = userBody.getEmail();
-            int emailLength = email.length();
-            StringBuilder emailBuilder = new StringBuilder();
-            for (int index = 0; index < emailLength; index++) {
-                emailBuilder.append(IDN.toASCII(String.valueOf(email.charAt(index))));
-            }
-            userBody.setEmail(emailBuilder.toString());
-            if (!Pattern.matches(RegexConstants.REGEX_EMAIL, userBody.getEmail())) {
+            userBody.setEmail(idnUtils.toASCII(userBody.getEmail()));
+            if ((userBody.getEmail() == null) || !Pattern.matches(RegexConstants.REGEX_EMAIL, userBody.getEmail())) {
                 resultMap.put("message", "Email format error");
                 resultMap.put("code", 100002);
             } else {
@@ -243,13 +227,7 @@ public class DnsPlatformUserServiceImpl implements DnsPlatformUserService {
             resultMap.put("message", "Please input verification code");
             resultMap.put("code", 100004);
         } else {
-            String email = userBody.getEmail();
-            int emailLength = email.length();
-            StringBuilder emailBuilder = new StringBuilder();
-            for (int index = 0; index < emailLength; index++) {
-                emailBuilder.append(IDN.toASCII(String.valueOf(email.charAt(index))));
-            }
-            userBody.setEmail(emailBuilder.toString());
+            userBody.setEmail(idnUtils.toASCII(userBody.getEmail()));
             String code = redisCache.getCacheObject(ResetConstants.SEND_RESET_EMAIL_CODE_CACHE_KEY + userBody.getEmail());
             String verifyResetEmailIpCacheKey = ResetConstants.VERIFY_RESET_EMAIL_IP_CACHE_KEY + IpUtils.getIpAddr(ServletUtils.getRequest());
             long verifyResetEmailIpLimitCount = redisCache.redisTemplate.boundValueOps(verifyResetEmailIpCacheKey).increment();
@@ -298,13 +276,7 @@ public class DnsPlatformUserServiceImpl implements DnsPlatformUserService {
             resultMap.put("message", "Please input password");
             resultMap.put("code", 100002);
         } else {
-            String email = userBody.getEmail();
-            int emailLength = email.length();
-            StringBuilder emailBuilder = new StringBuilder();
-            for (int index = 0; index < emailLength; index++) {
-                emailBuilder.append(IDN.toASCII(String.valueOf(email.charAt(index))));
-            }
-            userBody.setEmail(emailBuilder.toString());
+            userBody.setEmail(idnUtils.toASCII(userBody.getEmail()));
             String loginErrorIpCacheKey = LoginConstants.LOGIN_ERROR_IP_CACHE_KEY + IpUtils.getIpAddr(ServletUtils.getRequest());
             long loginErrorIpLimitCount = redisCache.redisTemplate.boundValueOps(loginErrorIpCacheKey).increment();
             if (loginErrorIpLimitCount <= LoginConstants.LOGIN_ERROR_IP_LIMIT_COUNT) {

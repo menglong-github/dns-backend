@@ -1,11 +1,12 @@
 package com.dns.generator.service;
 
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.dns.common.core.text.Convert;
 import com.dns.generator.domain.GenTableColumn;
 import com.dns.generator.mapper.GenTableColumnMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 业务字段 服务层实现

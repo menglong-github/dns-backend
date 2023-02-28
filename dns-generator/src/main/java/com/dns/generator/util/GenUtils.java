@@ -1,12 +1,13 @@
 package com.dns.generator.util;
 
-import java.util.Arrays;
-import org.apache.commons.lang3.RegExUtils;
 import com.dns.common.constant.GenConstants;
 import com.dns.common.utils.StringUtils;
 import com.dns.generator.config.GenConfig;
 import com.dns.generator.domain.GenTable;
 import com.dns.generator.domain.GenTableColumn;
+import org.apache.commons.lang3.RegExUtils;
+
+import java.util.Arrays;
 
 /**
  * 代码生成器 工具类

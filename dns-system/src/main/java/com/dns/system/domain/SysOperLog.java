@@ -1,10 +1,11 @@
 package com.dns.system.domain;
 
-import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.dns.common.annotation.Excel;
 import com.dns.common.annotation.Excel.ColumnType;
 import com.dns.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.util.Date;
 
 /**
  * 操作日志记录表 oper_log

@@ -1,11 +1,12 @@
 package com.dns.web.controller.common;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.dns.common.config.DnsConfig;
+import com.dns.common.constant.Constants;
+import com.dns.common.core.domain.AjaxResult;
+import com.dns.common.utils.StringUtils;
+import com.dns.common.utils.file.FileUploadUtils;
+import com.dns.common.utils.file.FileUtils;
+import com.dns.framework.config.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.dns.common.constant.Constants;
-import com.dns.common.core.domain.AjaxResult;
-import com.dns.common.utils.StringUtils;
-import com.dns.common.utils.file.FileUploadUtils;
-import com.dns.common.utils.file.FileUtils;
-import com.dns.framework.config.ServerConfig;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 通用请求处理

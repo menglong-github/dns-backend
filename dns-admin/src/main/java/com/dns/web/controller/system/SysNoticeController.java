@@ -1,17 +1,5 @@
 package com.dns.web.controller.system;
 
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.dns.common.annotation.Log;
 import com.dns.common.core.controller.BaseController;
 import com.dns.common.core.domain.AjaxResult;
@@ -19,6 +7,12 @@ import com.dns.common.core.page.TableDataInfo;
 import com.dns.common.enums.BusinessType;
 import com.dns.system.domain.SysNotice;
 import com.dns.system.service.ISysNoticeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 公告 信息操作处理

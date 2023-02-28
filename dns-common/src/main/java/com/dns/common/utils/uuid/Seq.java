@@ -1,8 +1,9 @@
 package com.dns.common.utils.uuid;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import com.dns.common.utils.DateUtils;
 import com.dns.common.utils.StringUtils;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author dns 序列生成类

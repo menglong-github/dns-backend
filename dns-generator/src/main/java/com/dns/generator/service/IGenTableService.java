@@ -1,8 +1,9 @@
 package com.dns.generator.service;
 
+import com.dns.generator.domain.GenTable;
+
 import java.util.List;
 import java.util.Map;
-import com.dns.generator.domain.GenTable;
 
 /**
  * 业务 服务层

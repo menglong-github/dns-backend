@@ -1,12 +1,5 @@
 package com.dns.framework.interceptor.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import javax.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import com.alibaba.fastjson2.JSON;
 import com.dns.common.annotation.RepeatSubmit;
 import com.dns.common.constant.CacheConstants;
@@ -15,6 +8,14 @@ import com.dns.common.filter.RepeatedlyRequestWrapper;
 import com.dns.common.utils.StringUtils;
 import com.dns.common.utils.http.HttpHelper;
 import com.dns.framework.interceptor.RepeatSubmitInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 判断请求url和数据是否和上一次相同，

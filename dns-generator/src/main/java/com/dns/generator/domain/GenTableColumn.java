@@ -1,8 +1,9 @@
 package com.dns.generator.domain;
 
-import javax.validation.constraints.NotBlank;
 import com.dns.common.core.domain.BaseEntity;
 import com.dns.common.utils.StringUtils;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 代码生成业务字段表 gen_table_column

@@ -1,9 +1,9 @@
 package com.dns.common.utils;
 
-import com.github.pagehelper.PageHelper;
 import com.dns.common.core.page.PageDomain;
 import com.dns.common.core.page.TableSupport;
 import com.dns.common.utils.sql.SqlUtil;
+import com.github.pagehelper.PageHelper;
 
 /**
  * 分页工具类

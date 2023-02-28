@@ -1,8 +1,8 @@
 package com.dns.framework.security.context;
 
+import com.dns.common.core.text.Convert;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
-import com.dns.common.core.text.Convert;
 
 /**
  * 权限信息

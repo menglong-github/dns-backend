@@ -1,11 +1,5 @@
 package com.dns.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.dns.common.annotation.DataScope;
 import com.dns.common.constant.UserConstants;
 import com.dns.common.core.domain.TreeSelect;
@@ -20,6 +14,13 @@ import com.dns.common.utils.spring.SpringUtils;
 import com.dns.system.mapper.SysDeptMapper;
 import com.dns.system.mapper.SysRoleMapper;
 import com.dns.system.service.ISysDeptService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 部门管理 服务实现

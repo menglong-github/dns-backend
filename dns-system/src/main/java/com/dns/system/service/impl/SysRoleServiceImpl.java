@@ -1,13 +1,5 @@
 package com.dns.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import com.dns.common.annotation.DataScope;
 import com.dns.common.constant.UserConstants;
 import com.dns.common.core.domain.entity.SysRole;
@@ -24,6 +16,11 @@ import com.dns.system.mapper.SysRoleMapper;
 import com.dns.system.mapper.SysRoleMenuMapper;
 import com.dns.system.mapper.SysUserRoleMapper;
 import com.dns.system.service.ISysRoleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
 
 /**
  * 角色 业务层处理

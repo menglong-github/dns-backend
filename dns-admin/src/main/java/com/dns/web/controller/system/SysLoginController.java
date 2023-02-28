@@ -1,9 +1,5 @@
 package com.dns.web.controller.system;
 
-import java.util.List;
-import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import com.dns.common.constant.Constants;
 import com.dns.common.core.domain.AjaxResult;
 import com.dns.common.core.domain.entity.SysMenu;
@@ -13,6 +9,11 @@ import com.dns.common.utils.SecurityUtils;
 import com.dns.framework.web.service.SysLoginService;
 import com.dns.framework.web.service.SysPermissionService;
 import com.dns.system.service.ISysMenuService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * 登录验证

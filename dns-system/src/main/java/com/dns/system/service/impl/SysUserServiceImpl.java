@@ -1,15 +1,5 @@
 package com.dns.system.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.validation.Validator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import com.dns.common.annotation.DataScope;
 import com.dns.common.constant.UserConstants;
 import com.dns.common.core.domain.entity.SysRole;
@@ -22,13 +12,20 @@ import com.dns.common.utils.spring.SpringUtils;
 import com.dns.system.domain.SysPost;
 import com.dns.system.domain.SysUserPost;
 import com.dns.system.domain.SysUserRole;
-import com.dns.system.mapper.SysPostMapper;
-import com.dns.system.mapper.SysRoleMapper;
-import com.dns.system.mapper.SysUserMapper;
-import com.dns.system.mapper.SysUserPostMapper;
-import com.dns.system.mapper.SysUserRoleMapper;
+import com.dns.system.mapper.*;
 import com.dns.system.service.ISysConfigService;
 import com.dns.system.service.ISysUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import javax.validation.Validator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 用户 业务层处理

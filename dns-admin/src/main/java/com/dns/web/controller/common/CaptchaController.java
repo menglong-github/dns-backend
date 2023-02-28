@@ -1,19 +1,6 @@
 package com.dns.web.controller.common;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.Resource;
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletResponse;
-
 import com.dns.common.config.DnsConfig;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.FastByteArrayOutputStream;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import com.google.code.kaptcha.Producer;
 import com.dns.common.constant.CacheConstants;
 import com.dns.common.constant.Constants;
 import com.dns.common.core.domain.AjaxResult;
@@ -21,6 +8,19 @@ import com.dns.common.core.redis.RedisCache;
 import com.dns.common.utils.sign.Base64;
 import com.dns.common.utils.uuid.IdUtils;
 import com.dns.system.service.ISysConfigService;
+import com.google.code.kaptcha.Producer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.FastByteArrayOutputStream;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 验证码操作处理

@@ -1,11 +1,12 @@
 package com.dns.common.core.domain;
 
+import com.dns.common.core.domain.entity.SysDept;
+import com.dns.common.core.domain.entity.SysMenu;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.dns.common.core.domain.entity.SysDept;
-import com.dns.common.core.domain.entity.SysMenu;
 
 /**
  * Treeselect树结构实体类

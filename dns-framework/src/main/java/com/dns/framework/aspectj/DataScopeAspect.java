@@ -1,11 +1,5 @@
 package com.dns.framework.aspectj;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.springframework.stereotype.Component;
 import com.dns.common.annotation.DataScope;
 import com.dns.common.core.domain.BaseEntity;
 import com.dns.common.core.domain.entity.SysRole;
@@ -15,6 +9,13 @@ import com.dns.common.core.text.Convert;
 import com.dns.common.utils.SecurityUtils;
 import com.dns.common.utils.StringUtils;
 import com.dns.framework.security.context.PermissionContextHolder;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 数据过滤处理

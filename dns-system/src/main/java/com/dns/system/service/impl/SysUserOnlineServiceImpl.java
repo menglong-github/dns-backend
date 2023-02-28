@@ -1,10 +1,10 @@
 package com.dns.system.service.impl;
 
-import org.springframework.stereotype.Service;
 import com.dns.common.core.domain.model.LoginUser;
 import com.dns.common.utils.StringUtils;
 import com.dns.system.domain.SysUserOnline;
 import com.dns.system.service.ISysUserOnlineService;
+import org.springframework.stereotype.Service;
 
 /**
  * 在线用户 服务层处理

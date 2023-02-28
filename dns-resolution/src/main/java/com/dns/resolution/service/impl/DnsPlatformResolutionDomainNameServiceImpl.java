@@ -14,22 +14,18 @@ import com.dns.resolution.domain.res.DnsPlatformResolutionDomainNameView;
 import com.dns.resolution.mapper.DnsPlatformResolutionDomainNameMapper;
 import com.dns.resolution.mapper.DnsPlatformResolutionDomainNameZoneMapper;
 import com.dns.resolution.service.DnsPlatformResolutionDomainNameService;
-import com.dns.resolution.utils.AuthUtils;
-import com.dns.resolution.utils.PageUtils;
-import com.dns.resolution.utils.RabbitMqUtils;
-import com.dns.resolution.utils.SnowflakeUtils;
+import com.dns.resolution.utils.*;
 import com.rabbitmq.client.Channel;
 import dns.core.*;
 import dns.core.utils.base16;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.net.IDN;
-import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.SecureRandom;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECGenParameterSpec;
@@ -59,6 +55,9 @@ public class DnsPlatformResolutionDomainNameServiceImpl implements DnsPlatformRe
     private RabbitMqUtils rabbitMqUtils;
 
     @Autowired
+    private IDNUtils idnUtils;
+
+    @Autowired
     private DnsPlatformResolutionDomainNameMapper dnsPlatformResolutionDomainNameMapper;
 
     @Autowired
@@ -75,13 +74,7 @@ public class DnsPlatformResolutionDomainNameServiceImpl implements DnsPlatformRe
             Name master = null;
             String domainName = null;
             try {
-                domainName = domainNameBody.getDomainName();
-                StringBuilder domainNameBuilder = new StringBuilder();
-                int domainNameLength = domainName.length();
-                for (int index = 0; index < domainNameLength; index++) {
-                    domainNameBuilder.append(IDN.toASCII(String.valueOf(domainName.charAt(index))));
-                }
-                domainName = domainNameBuilder + ".";
+                domainName = idnUtils.toASCII(domainNameBody.getDomainName()) + ".";
                 master = new Name(domainName);
             } catch (Exception exception) {
                 resultMap.put("message", "Domain name format error");
@@ -267,20 +260,11 @@ public class DnsPlatformResolutionDomainNameServiceImpl implements DnsPlatformRe
 
     @Override
     public TableDataInfo list(DomainNameBody domainNameBody) {
+        domainNameBody.setDomainName(idnUtils.toASCII(domainNameBody.getDomainName()));
         domainNameBody.setUserId(authUtils.getLoginUser().getUserId());
         domainNameBody.setPageSize(10);
         startPage();
-        List<DnsPlatformResolutionDomainNameView> dnsPlatformResolutionDomainNameViewList = dnsPlatformResolutionDomainNameMapper.selectDnsPlatformResolutionDomainNameViewListByUserId(domainNameBody);
-        for (DnsPlatformResolutionDomainNameView dnsPlatformResolutionDomainNameView : dnsPlatformResolutionDomainNameViewList) {
-            String domainName = dnsPlatformResolutionDomainNameView.getDomainName();
-            StringBuilder domainNameBuilder = new StringBuilder();
-            int domainNameLength = domainName.length();
-            for (int index = 0; index < domainNameLength; index++) {
-                domainNameBuilder.append(IDN.toUnicode(String.valueOf(domainName.charAt(index))));
-            }
-            dnsPlatformResolutionDomainNameView.setDomainName(domainNameBuilder.toString());
-        }
-        return pageUtils.getDataTable(dnsPlatformResolutionDomainNameViewList);
+        return pageUtils.getDataTable(dnsPlatformResolutionDomainNameMapper.selectDnsPlatformResolutionDomainNameViewListByUserId(domainNameBody));
     }
 
 

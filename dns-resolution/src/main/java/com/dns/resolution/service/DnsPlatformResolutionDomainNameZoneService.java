@@ -1,10 +1,8 @@
 package com.dns.resolution.service;
 
-import com.dns.resolution.domain.dto.DnsPlatformResolutionDomainName;
 import com.dns.resolution.domain.dto.DnsPlatformResolutionDomainNameZone;
 import com.dns.resolution.domain.req.DomainNameBody;
 import com.dns.resolution.domain.res.DnsPlatformResolutionDomainNameZoneSimpleGeo;
-import com.dns.resolution.domain.res.DnsPlatformResolutionDomainNameZoneView;
 
 import java.util.List;
 import java.util.Map;

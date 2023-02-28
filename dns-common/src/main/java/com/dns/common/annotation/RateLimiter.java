@@ -1,12 +1,9 @@
 package com.dns.common.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import com.dns.common.constant.CacheConstants;
 import com.dns.common.enums.LimitType;
+
+import java.lang.annotation.*;
 
 /**
  * 限流注解

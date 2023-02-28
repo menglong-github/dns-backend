@@ -1,6 +1,10 @@
 package com.dns.framework.web.exception;
 
-import javax.servlet.http.HttpServletRequest;
+import com.dns.common.constant.HttpStatus;
+import com.dns.common.core.domain.AjaxResult;
+import com.dns.common.exception.DemoModeException;
+import com.dns.common.exception.ServiceException;
+import com.dns.common.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -9,11 +13,8 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.dns.common.constant.HttpStatus;
-import com.dns.common.core.domain.AjaxResult;
-import com.dns.common.exception.DemoModeException;
-import com.dns.common.exception.ServiceException;
-import com.dns.common.utils.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 全局异常处理器

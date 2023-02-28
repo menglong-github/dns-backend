@@ -1,16 +1,16 @@
 package com.dns.web.controller.system;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import com.dns.common.core.controller.BaseController;
 import com.dns.common.core.domain.AjaxResult;
 import com.dns.common.core.domain.model.RegisterBody;
 import com.dns.common.utils.StringUtils;
 import com.dns.framework.web.service.SysRegisterService;
 import com.dns.system.service.ISysConfigService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 注册验证

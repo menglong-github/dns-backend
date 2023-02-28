@@ -1,8 +1,9 @@
 package com.dns.common.core.text;
 
+import com.dns.common.utils.StringUtils;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import com.dns.common.utils.StringUtils;
 
 /**
  * 字符集工具类

@@ -1,8 +1,9 @@
 package com.dns.framework.web.domain.server;
 
-import java.lang.management.ManagementFactory;
 import com.dns.common.utils.Arith;
 import com.dns.common.utils.DateUtils;
+
+import java.lang.management.ManagementFactory;
 
 /**
  * JVM相关信息

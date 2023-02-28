@@ -1,8 +1,9 @@
 package com.dns.system.service;
 
-import java.util.List;
 import com.dns.common.core.domain.TreeSelect;
 import com.dns.common.core.domain.entity.SysDept;
+
+import java.util.List;
 
 /**
  * 部门管理 服务层

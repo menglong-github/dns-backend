@@ -1,10 +1,5 @@
 package com.dns.framework.web.service;
 
-import java.util.concurrent.TimeUnit;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Component;
 import com.dns.common.constant.CacheConstants;
 import com.dns.common.constant.Constants;
 import com.dns.common.core.domain.entity.SysUser;
@@ -16,6 +11,12 @@ import com.dns.common.utils.SecurityUtils;
 import com.dns.framework.manager.AsyncManager;
 import com.dns.framework.manager.factory.AsyncFactory;
 import com.dns.framework.security.context.AuthenticationContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * 登录密码方法

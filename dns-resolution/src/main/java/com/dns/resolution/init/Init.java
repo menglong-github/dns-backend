@@ -6,14 +6,18 @@ import com.dns.resolution.mapper.DnsPlatformResolutionDomainNameMapper;
 import com.dns.resolution.mapper.DnsPlatformResolutionDomainNameZoneMapper;
 import com.dns.resolution.utils.RabbitMqUtils;
 import com.rabbitmq.client.*;
-import dns.core.*;
+import dns.core.Name;
+import dns.core.TransferZone;
+import dns.core.Zone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class Init {

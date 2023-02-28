@@ -1,6 +1,5 @@
 package com.dns.resolution.mapper;
 
-import com.dns.resolution.domain.dto.DnsPlatformResolutionDomainName;
 import com.dns.resolution.domain.dto.DnsPlatformResolutionDomainNameZone;
 import com.dns.resolution.domain.res.DnsPlatformResolutionDomainNameZoneView;
 

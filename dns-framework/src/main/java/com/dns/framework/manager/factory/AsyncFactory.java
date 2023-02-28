@@ -1,8 +1,5 @@
 package com.dns.framework.manager.factory;
 
-import java.util.TimerTask;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.dns.common.constant.Constants;
 import com.dns.common.utils.LogUtils;
 import com.dns.common.utils.ServletUtils;
@@ -15,6 +12,10 @@ import com.dns.system.domain.SysOperLog;
 import com.dns.system.service.ISysLogininforService;
 import com.dns.system.service.ISysOperLogService;
 import eu.bitwalker.useragentutils.UserAgent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.TimerTask;
 
 /**
  * 异步工厂（产生任务用）

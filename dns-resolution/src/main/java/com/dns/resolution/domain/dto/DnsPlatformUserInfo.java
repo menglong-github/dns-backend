@@ -1,6 +1,5 @@
 package com.dns.resolution.domain.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
