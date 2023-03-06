@@ -27,12 +27,7 @@ public class IDNUtils {
                 }
             } else {
                 StringBuilder contentBuilder = new StringBuilder();
-                idna.nameToASCII(content, contentBuilder, info);
-                if (info.hasErrors()) {
-                    return null;
-                } else {
-                    return contentBuilder.toString().toLowerCase();
-                }
+                return idna.nameToASCII(content, contentBuilder, info).toString().toLowerCase();
             }
         }
     }
