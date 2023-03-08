@@ -17,7 +17,7 @@ public class LoginConstants {
 
     public static final String JWT_HEADER = "Authorization";
 
-    public static final String JWT_SECRET = "";
+    public static final String JWT_SECRET = "$10$ZUWZPRj61SI705Qd66XQBe7ZMPUY5Gg2QKVan/7.TPDvNJKKMavVm";
 
     public static final int JWT_EXPIRE = 60;
 
